@@ -1,3 +1,3 @@
 let config = {
-    baseUrl: "http://localhost:3000"
+    baseUrl: "http://13.233.250.78:8085"
 }

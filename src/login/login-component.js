@@ -25,10 +25,13 @@ class LoginComponent extends PolymerElement{
             },
             loadingData:{
                 type: Boolean,
-                value: true
+                value: false
             },
             toastMessage:{
                 type: String
+            },
+            user:{
+                type: Object
             }
         }
     }
@@ -64,7 +67,7 @@ class LoginComponent extends PolymerElement{
                 id="ajax"
                 url="[[getLoginURL()]]"
                 method="post"
-                body="[[]]"
+                body="[[user]]"
                 content-type="application/json"
                 on-response="handleResponse"
                 on-error="handleError"
@@ -75,19 +78,26 @@ class LoginComponent extends PolymerElement{
     }
     submitUser(){
         if(this.$.loginForm.validate()){
-            this.set('route.path', '/admin/1');
+            this.user = {
+                "userName": this.userName,
+                "password": this.password
+            }
+            this.$.ajax.generateRequest();
         }
     }
     reset(){
         this.$.loginForm.reset();
     }
     getLoginURL(){
-        return config.baseUrl + '/login'
+        return config.baseUrl + '/login_secure'
     }
     handleResponse(event){
         if(event.detail.response && event.detail.response.status){
             this.userDetails = event.detail.response;
-            sessionStorage.setItem('userDetails', JSON.parse(this.userDetails));
+            this.reset();
+            sessionStorage.setItem('userDetails', JSON.stringify(this.userDetails));
+            this.dispatchEvent(new CustomEvent('login', {bubbles: true, composed: true, detail:{"login":true}}))
+            this.set('route.path', '/admin/1');
         }else{
             this.toastMessage = "Invalid Credentials";
             this.$.toast.open();

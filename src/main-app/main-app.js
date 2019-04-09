@@ -12,6 +12,8 @@ import '@polymer/paper-icon-button/paper-icon-button.js';
 import '@polymer/paper-item/paper-item.js';
 import '@polymer/paper-listbox/paper-listbox.js';
 import '@polymer/iron-image/iron-image.js';
+import {sharedStyle} from '../shared-style/shared-style.js';
+import '@polymer/paper-button/paper-button.js';
 
 /**
  * @customElement
@@ -20,11 +22,17 @@ import '@polymer/iron-image/iron-image.js';
 class MainApp extends PolymerElement {
   connectedCallback(){
     super.connectedCallback();
-    // document.
+    this.checkUser();
+    document.addEventListener('login', (event) => {
+      if(event.detail.login){
+        this.checkUser();
+      }
+    })
   }
   
   static get template() {
     return html`
+    ${sharedStyle}
     <style>
     :host {
 --paper-font-common-base: {
@@ -47,9 +55,13 @@ text-align: center;
 text-decoration: none;
 color: black;
     }
-    paper-icon-button {
-        color: white;
-    }
+  paper-icon-button {
+      color: white;
+  }
+  paper-button{
+    float: right;
+    color: white
+  }
 app-toolbar {
 background-color: #ff6200;
 color: black;
@@ -77,22 +89,31 @@ color: #ff6200;
 <app-route route="{{route}}" pattern="/:page" data="{{routeData}}" tail="{{subroute}}"></app-route>
 <app-toolbar>
   <paper-icon-button on-click="_toggleDrawer" icon="menu"></paper-icon-button>
-  <div main-title><h3>ABC Retail Banking</h3></div>
+  <div main-title>
+    <h3>ABC Retail Banking</h3>
+  </div>
+  <template is="dom-if" if="[[loggedUser]]">
+      <paper-button raised on-click="logout">Logout</paper-button>        
+  </template>
 </app-toolbar>
 <app-drawer-layout has-scrolling-region responsive-width="940px">
     <app-drawer swipe-open slot="drawer">
         <app-header-layout has-scrolling-region>
             <iron-image sizing="cover" preload src="../images/ING_logo.png"></iron-image>
             <paper-listbox>
+              <template is="dom-if" if="[[!loggedUser]]">
                 <paper-item>
                       <a href="#/login"> Login </a>
                 </paper-item>
+              </template>
             </paper-listbox>
         </<app-header-layout>
     </app-drawer>
+    
     <iron-pages selected="[[page]]" attr-for-selected="name" selected-attribute="visible" fallback-selection="404">
       <login-comp name="login" route="{{route}}"></login-comp>
       <admin-comp name="admin" route="{{subroute}}"></admin-comp>
+      <user-comp name="user" route="{{subroute}}"></user-comp>
     </iron-pages>
 </app-drawer-layout>
     `;
@@ -129,8 +150,11 @@ color: #ff6200;
     case 'admin':
         import('../admin/admin-component.js');
         break;
+    case 'user':
+        import('../user/user-component.js');
+        break;
     default:
-        this.page = 'login';
+        this.page = this.loggedUser ? 'admin' : 'login';
       }
   }
   _toggleDrawer() {
@@ -139,12 +163,17 @@ color: #ff6200;
   }
 
   checkUser(){
-    let userDetails = sessionStorage.getItem('userDetails');
-    if(user){
+    let userDetails = JSON.parse(sessionStorage.getItem('userDetails'));
+    if(userDetails){
       this.loggedUser = true;
     }else{
       this.loggedUser = false;
     }
+  }
+  logout(){
+    sessionStorage.clear();
+    this.checkUser();
+    this.set('route.path', '/');
   }
 }
 
