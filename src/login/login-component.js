@@ -98,9 +98,10 @@ class LoginComponent extends PolymerElement{
             sessionStorage.setItem('userDetails', JSON.stringify(this.userDetails));
             this.dispatchEvent(new CustomEvent('login', {bubbles: true, composed: true, detail:{"login":true}}))
             if(this.userDetails.role === 'ADMIN'){
-                this.set('route.path', '/admin/1');
+                this.set('route.path', '/admin');
             }else{
-                this.set('route.path', '/user');
+                let url = '/user/'+ this.userDetails.accountnumber;
+                this.set('route.path', url);
             }
         }else{
             this.toastMessage = "Invalid Credentials";

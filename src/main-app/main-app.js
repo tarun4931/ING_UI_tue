@@ -100,13 +100,13 @@ color: #ff6200;
     <app-drawer swipe-open slot="drawer">
         <app-header-layout has-scrolling-region>
             <iron-image sizing="cover" preload src="../images/ING_logo.png"></iron-image>
-            <paper-listbox>
+            <!-- <paper-listbox>
               <template is="dom-if" if="[[!loggedUser]]">
                 <paper-item>
                       <a href="#/login"> Login </a>
                 </paper-item>
               </template>
-            </paper-listbox>
+            </paper-listbox> -->
         </<app-header-layout>
     </app-drawer>
     
