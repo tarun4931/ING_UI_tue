@@ -79,7 +79,7 @@ class LoginComponent extends PolymerElement{
     submitUser(){
         if(this.$.loginForm.validate()){
             this.user = {
-                "userName": this.userName,
+                "name": this.userName,
                 "password": this.password
             }
             this.$.ajax.generateRequest();
@@ -89,7 +89,7 @@ class LoginComponent extends PolymerElement{
         this.$.loginForm.reset();
     }
     getLoginURL(){
-        return config.baseUrl + '/login_secure'
+        return config.baseUrl + '/login'
     }
     handleResponse(event){
         if(event.detail.response && event.detail.response.status){
