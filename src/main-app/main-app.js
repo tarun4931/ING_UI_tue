@@ -18,13 +18,7 @@ import '@polymer/iron-image/iron-image.js';
  * @polymer
  */
 class MainApp extends PolymerElement {
-  constructor(){
-    super();
-    this.limit = 5;
-    this.url= "https://jsonplaceholder.typicode.com/posts";
-    this.method = "GET";
-    this.pagination = true;
-  }
+  
   static get template() {
     return html`
     <style>
@@ -94,6 +88,7 @@ color: #ff6200;
     </app-drawer>
     <iron-pages selected="[[page]]" attr-for-selected="name" selected-attribute="visible" fallback-selection="404">
       <login-comp name="login" route="{{route}}"></login-comp>
+      <admin-comp name="admin" route="{{subroute}}"></admin-comp>
     </iron-pages>
 </app-drawer-layout>
     `;
@@ -122,6 +117,9 @@ _pageChanged(currentPage, oldPage) {
 switch (currentPage) {
   case 'login':
       import('../login/login-component.js');
+      break;
+  case 'admin':
+      import('../admin/admin-component.js');
       break;
   default:
       this.page = 'login';
