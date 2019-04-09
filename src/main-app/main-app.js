@@ -18,6 +18,10 @@ import '@polymer/iron-image/iron-image.js';
  * @polymer
  */
 class MainApp extends PolymerElement {
+  connectedCallback(){
+    super.connectedCallback();
+    // document.
+  }
   
   static get template() {
     return html`
@@ -73,7 +77,7 @@ color: #ff6200;
 <app-route route="{{route}}" pattern="/:page" data="{{routeData}}" tail="{{subroute}}"></app-route>
 <app-toolbar>
   <paper-icon-button on-click="_toggleDrawer" icon="menu"></paper-icon-button>
-  <div main-title>ING Trader</div>
+  <div main-title><h3>ABC Retail Banking</h3></div>
 </app-toolbar>
 <app-drawer-layout has-scrolling-region responsive-width="940px">
     <app-drawer swipe-open slot="drawer">
@@ -102,32 +106,45 @@ color: #ff6200;
       page:{
         type: String,
         observer:'_pageChanged'
+      },
+      loggedUser:{
+        type: Boolean,
+        value: false
       }
     };
   }
   static get observers() {
     return ['_routeChanged(routeData.page)']
-}
+  }
 
-_routeChanged(page) {
-    this.page = page || 'login';
-}
+  _routeChanged(page) {
+      this.page = page || 'login';
+  }
 
-_pageChanged(currentPage, oldPage) {
-switch (currentPage) {
-  case 'login':
-      import('../login/login-component.js');
-      break;
-  case 'admin':
-      import('../admin/admin-component.js');
-      break;
-  default:
-      this.page = 'login';
-    }
-}
+  _pageChanged(currentPage, oldPage) {
+  switch (currentPage) {
+    case 'login':
+        import('../login/login-component.js');
+        break;
+    case 'admin':
+        import('../admin/admin-component.js');
+        break;
+    default:
+        this.page = 'login';
+      }
+  }
   _toggleDrawer() {
     var drawer = this.shadowRoot.querySelector('app-drawer');
     drawer.toggle();
+  }
+
+  checkUser(){
+    let userDetails = sessionStorage.getItem('userDetails');
+    if(user){
+      this.loggedUser = true;
+    }else{
+      this.loggedUser = false;
+    }
   }
 }
 

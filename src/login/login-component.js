@@ -3,6 +3,8 @@ import '@polymer/iron-form/iron-form.js';
 import '@polymer/paper-input/paper-input.js';
 import { sharedStyle } from '../shared-style/shared-style.js';
 import '@polymer/paper-button/paper-button';
+import '@polymer/paper-spinner/paper-spinner.js';
+import '@polymer/paper-toast/paper-toast.js';
 class LoginComponent extends PolymerElement{
     constructor(){
         super();
@@ -20,14 +22,24 @@ class LoginComponent extends PolymerElement{
             },
             route:{
                 type: Object
+            },
+            loadingData:{
+                type: Boolean,
+                value: true
+            },
+            toastMessage:{
+                type: String
             }
         }
     }
     static get template(){
         return html `
             ${sharedStyle}
-            <h1>Login</h1>
+            <paper-toast id="toast" text="[[toastMessage]]" with-backdrop horizontal-align="center" vertical-align="middle"></paper-toast>
             <div class="container">
+                <div class="col-sm-12 d-flex justify-content-center align-content-center">
+                    <paper-spinner active="{{loadingData}}"></paper-spinner>
+                </div>
                 <div class="col-sm-6 col-md-6 offset-md-2 border">
                     <iron-form id="loginForm">
                         <form>
@@ -49,9 +61,10 @@ class LoginComponent extends PolymerElement{
                 </div>
             </div>
             <iron-ajax
-                
+                id="ajax"
                 url="[[getLoginURL()]]"
-                method="get"
+                method="post"
+                body="[[]]"
                 content-type="application/json"
                 on-response="handleResponse"
                 on-error="handleError"
@@ -62,7 +75,6 @@ class LoginComponent extends PolymerElement{
     }
     submitUser(){
         if(this.$.loginForm.validate()){
-            console.log(this.userName, this.password);
             this.set('route.path', '/admin/1');
         }
     }
@@ -76,6 +88,15 @@ class LoginComponent extends PolymerElement{
         if(event.detail.response && event.detail.response.status){
             this.userDetails = event.detail.response;
             sessionStorage.setItem('userDetails', JSON.parse(this.userDetails));
+        }else{
+            this.toastMessage = "Invalid Credentials";
+            this.$.toast.open();
+        }
+    }
+    handleError(event){
+        if(event){
+          this.toastMessage = "Unable to process the request";
+          this.$.toast.open();
         }
     }
 }
